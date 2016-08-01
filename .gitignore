@@ -1,0 +1,18 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+*.sw[a-z]
+tags
+
+# Ignoring this for now.
+.mrmuranorc
+.mrmuranorc.private
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+

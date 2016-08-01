@@ -1,0 +1,3 @@
+[submodule "modules/TSQ"]
+	path = modules/TSQ
+	url = git@github.com:tadpol/TSQ.git
