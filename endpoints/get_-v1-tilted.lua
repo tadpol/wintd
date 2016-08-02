@@ -21,6 +21,7 @@ else
 	local max=0
 	for i, window, midish in TSQ.series_ipairs(out.results[1].series) do
 		if window.mean ~= nil and midish.mean ~= nil then
+			-- TODO: timezones.
 			local s = os.date('%Y-%m-%d %H:%M:%S', window.time)
 			local w = {}
 			w.title = s
