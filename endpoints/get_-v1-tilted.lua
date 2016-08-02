@@ -5,11 +5,11 @@ local qq = TSQ.q():fields('MEAN(temp)'):from('wintd')
 qq:where_tag_is('sn', 3):OR_tag_is('sn', 5)
 qq:AND_time_ago('8h')
 qq:groupby('sn'):groupbytime('15m'):fill('prev')
-local out = Timeseries.query{ epoch='ms', q = tostring(qq) }
 
-if request.parameters.raw ~= nil then
-	return out
-end
+if request.parameters.qr ~=nil then return tostring(qq) end
+local out = Timeseries.query{ epoch='ms', q = tostring(qq) }
+if request.parameters.raw ~= nil then return out end
+
 if out.results[1].series == nil then
 	-- ERROR
   response.code = 500
@@ -27,3 +27,5 @@ else
 	end
 	return table.concat(result, "\n") .. "\n\n"
 end
+-- vim: set ai sw=4 ts=4 :
+
