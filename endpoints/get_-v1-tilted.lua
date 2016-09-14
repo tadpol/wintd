@@ -53,6 +53,7 @@ else
       minValue = min-1,
       maxValue = max+1
     }
+	result.type = "line"
 	return {graph=result}
 end
 -- vim: set ai sw=4 ts=4 :
