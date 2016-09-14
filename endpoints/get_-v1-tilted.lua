@@ -12,30 +12,36 @@ if request.parameters.raw ~= nil then return out end
 
 if out.results[1].series == nil then
 	-- ERROR
-  response.code = 500
-  response.message = out.message
+	response.code = 500
+	response.message = out.message
 else
 	local dpwindow = {}
 	local dproom = {}
 	local min=9999
 	local max=0
 	for i, window, midish in TSQ.series_ipairs(out.results[1].series) do
-		if window.mean ~= nil and midish.mean ~= nil then
-			-- TODO: timezones.
+		local wm = 0
+		local mm = 0
+		if window ~= nil and window.mean ~= nil then
 			local s = os.date('%Y-%m-%d %H:%M:%S', window.time)
 			local w = {}
 			w.title = s
 			w.value = window.mean
+			wm = window.mean
 			dpwindow[#dpwindow + 1] = w
+		end
 
+		if midish ~= nil and midish.mean ~= nil then
+			local s = os.date('%Y-%m-%d %H:%M:%S', midish.time)
 			local r = {}
 			r.title = s
 			r.value = midish.mean
+			mm = midish.mean
 			dproom[#dproom + 1] = r
-
-			max = math.max(max, window.mean, midish.mean)
-			min = math.min(min, window.mean, midish.mean)
 		end
+
+		max = math.max(max, wm, mm)
+		min = math.min(min, wm, mm)
 	end
 
 	local result = {}
@@ -49,12 +55,14 @@ else
 		title = "Room",
 		datapoints = dproom
 	}
+	if max == 0 then max = 78 end
+	if min == 9999 then min = 70 end
 	result.yAxis = {
-      minValue = min-1,
-      maxValue = max+1
-    }
+		minValue = min-1,
+		maxValue = max+1
+	}
 	result.type = "line"
 	return {graph=result}
 end
--- vim: set ai sw=4 ts=4 :
+-- vim: set ai sw=2 ts=2 :
 
