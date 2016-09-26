@@ -5,9 +5,9 @@ Icon
 *.sw[a-z]
 tags
 
-# Ignoring this for now.
-.mrmuranorc
-.mrmuranorc.private
+.mrmurano/
+.mrmuranorc.*
+.env
 
 # Thumbnails
 ._*
