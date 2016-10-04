@@ -2,9 +2,24 @@
 -- Since various sunflowers have differnet sensors a single product definition
 -- doesn't work.  So each sunflower has a single dataport that carries JSON data.
 -- Then here we just reshape the JSON into the write command.
-local dvs = from_json(data.value[2])
-local tswq = TSW.write("wintd", {sn=data.device_sn}, dvs)
 
-Timeseries.write({ query = tswq })
+Keystore.command{
+	key="last." .. tostring(data.device_sn),
+	command='lpush',
+	args={to_json(data)}
+}
+Keystore.command{
+	key="last." .. tostring(data.device_sn),
+	command='ltrim',
+	args={0, 10}
+}
 
--- vim: set ai sw=4 ts=4 :
+local dvs, err = from_json(data.value[2])
+if dvs ~= nil then
+	local tswq = TSW.write("wintd", {sn=data.device_sn}, dvs)
+	Timeseries.write({ query = tswq })
+else
+	Keystore.set{key="err." .. tostring(data.device_sn), value = err}
+end
+
+-- vim: set ai sw=2 ts=2 :
