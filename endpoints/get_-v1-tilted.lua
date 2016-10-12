@@ -23,15 +23,14 @@ else
 	local min=9999
 	local max=0
 	for i, window, midish in TSQ.series_ipairs(out.results[1].series) do
-		local wm = 0
-		local mm = 0
 		if window ~= nil and window.mean ~= nil then
 			local s = os.date('%Y-%m-%d %H:%M:%S', window.time)
 			local w = {}
 			w.title = s
 			w.value = window.mean
-			wm = window.mean
 			dpwindow[#dpwindow + 1] = w
+			max = math.max(max, window.mean)
+			min = math.min(min, window.mean)
 		end
 
 		if midish ~= nil and midish.mean ~= nil then
@@ -39,12 +38,11 @@ else
 			local r = {}
 			r.title = s
 			r.value = midish.mean
-			mm = midish.mean
 			dproom[#dproom + 1] = r
+			max = math.max(max, window.mean)
+			min = math.min(min, window.mean)
 		end
 
-		max = math.max(max, wm, mm)
-		min = math.min(min, wm, mm)
 	end
 
 	local result = {}
