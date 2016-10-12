@@ -1,7 +1,7 @@
 --#ENDPOINT get /v1/tilted
 -- Gets a view window for a plot
 -- Returns a history of the tilt with averages
-local qq = TSQ.q():fields('MEAN(temp)'):from('wintd')
+local qq = TSQ.q():fields('MEAN(fahrenheit)'):from('window')
 qq:where_tag_is('sn', 3):OR_tag_is('sn', 5)
 qq:AND_time_ago('8h')
 qq:groupby('sn'):groupbytime('15m'):fill('prev')
@@ -13,7 +13,10 @@ if request.parameters.raw ~= nil then return out end
 if out.results[1].series == nil then
 	-- ERROR
 	response.code = 500
-	response.message = out.message
+	response.message = {
+		code=500,
+		message = out.message
+	}
 else
 	local dpwindow = {}
 	local dproom = {}

@@ -16,7 +16,9 @@ Keystore.command{
 
 local dvs, err = from_json(data.value[2])
 if dvs ~= nil then
-	local tswq = TSW.write("wintd", {sn=data.device_sn}, dvs)
+	dvs.sern = nil
+	dvs.sn = nil
+	local tswq = TSW.write("window", {sn=data.device_sn}, dvs)
 	Timeseries.write({ query = tswq })
 else
 	Keystore.set{key="err." .. tostring(data.device_sn), value = err}
