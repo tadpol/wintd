@@ -1,49 +1,64 @@
---#ENDPOINT get /v1/tilted
+--#ENDPOINT get /v1/tilter
+-- luacheck: globals request response (magic variables from Murano)
 -- Gets a view window for a plot
 -- Returns a history of the tilt with averages
-local qq = TSQ.q():fields('MEAN(fahrenheit)'):from('window')
-qq:where_tag_is('sn', 3):OR_tag_is('sn', 5)
-qq:AND_time_ago('8h')
-qq:groupby('sn'):groupbytime('15m'):fill('prev')
 
-if request.parameters.qr ~=nil then return tostring(qq) end
-local out = Timeseries.query{ epoch='s', q = tostring(qq) }
-if request.parameters.raw ~= nil then return out end
+local window = Tsdb.query {
+	tags = {sn = '3'},
+	metrics = {'fahrenheit'},
+	relative_start = "-8h",
+	sampling_size = "15m",
+	aggregate = {"avg"},
+	fill = "previous",
+	epoch = 's',
+}
+local room = Tsdb.query {
+	tags = {sn = '5'},
+	metrics = {'fahrenheit'},
+	relative_start = "-8h",
+	sampling_size = "15m",
+	aggregate = {"avg"},
+	fill = "previous",
+	epoch = 's',
+}
+if request.parameters.raw ~= nil then return {window = window, room = room} end
 
-if out.results[1].series == nil then
+
+if window.error ~= nil then
 	-- ERROR
 	response.code = 500
 	response.message = {
 		code=500,
-		message = out.message
+		message = window
+	}
+elseif room.error ~= nil then
+	response.code = 500
+	response.message = {
+		code=500,
+		message = room
 	}
 else
-	local dpwindow = {}
-	local dproom = {}
 	local min=9999
 	local max=0
-	for i, window, midish in TSQ.series_ipairs(out.results[1].series) do
-		if window ~= nil and window.mean ~= nil then
-			local s = os.date('%Y-%m-%d %H:%M:%S', window.time)
-			local w = {}
-			w.title = s
-			w.value = window.mean
-			dpwindow[#dpwindow + 1] = w
-			max = math.max(max, window.mean)
-			min = math.min(min, window.mean)
-		end
 
-		if midish ~= nil and midish.mean ~= nil then
-			local s = os.date('%Y-%m-%d %H:%M:%S', midish.time)
-			local r = {}
-			r.title = s
-			r.value = midish.mean
-			dproom[#dproom + 1] = r
-			max = math.max(max, window.mean)
-			min = math.min(min, window.mean)
+	local function tsbd_result_to_plot(out)
+		local resulting = {}
+		for _, entry in ipairs(out.values) do
+			local s = os.date('%Y-%m-%d %H:%M:%S', entry[1])
+			if type(entry[2]) == 'table' and type(entry[2].avg) == 'number' then
+				local w = {}
+				w.title = s
+				w.value = entry[2].avg
+				resulting[#resulting + 1] = w
+				max = math.max(max, w.value)
+				min = math.min(min, w.value)
+			end
 		end
-
+		return resulting
 	end
+
+	local dpwindow = tsbd_result_to_plot(window)
+	local dproom = tsbd_result_to_plot(room)
 
 	local result = {}
 	result.title = "Desk Temperatures"
