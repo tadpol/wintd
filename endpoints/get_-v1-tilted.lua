@@ -1,4 +1,4 @@
---#ENDPOINT get /v1/tilter
+--#ENDPOINT get /v1/tilted
 -- luacheck: globals request response (magic variables from Murano)
 -- Gets a view window for a plot
 -- Returns a history of the tilt with averages
