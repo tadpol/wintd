@@ -13,6 +13,16 @@ local window = Tsdb.query {
 	epoch = 's',
 	order_by = 'asc',
 }
+local windowshade = Tsdb.query {
+	tags = {sn = '7'},
+	metrics = {'fahrenheit'},
+	relative_start = "-8h",
+	sampling_size = "15m",
+	aggregate = {"avg"},
+	fill = "previous",
+	epoch = 's',
+	order_by = 'asc',
+}
 local room = Tsdb.query {
 	tags = {sn = '5'},
 	metrics = {'fahrenheit'},
@@ -23,7 +33,9 @@ local room = Tsdb.query {
 	epoch = 's',
 	order_by = 'asc',
 }
-if request.parameters.raw ~= nil then return {window = window, room = room} end
+if request.parameters.raw ~= nil then
+	return {window = window, windowshade = windowshade, room = room}
+end
 
 
 if window.error ~= nil then
@@ -67,10 +79,17 @@ else
 	result.datasequences = {}
 	result.datasequences[1] = {
 		title = "Window",
+		color = "blue",
 		datapoints = dpwindow
 	}
 	result.datasequences[2] = {
+		title = "Shade",
+		color = "aqua",
+		datapoints = tsbd_result_to_plot(windowshade)
+	}
+	result.datasequences[3] = {
 		title = "Room",
+		color = "red",
 		datapoints = dproom
 	}
 	if max == 0 then max = 78 end
@@ -82,5 +101,7 @@ else
 	result.type = "line"
 	return {graph=result}
 end
+-- https://library.panic.com/statusboard/graph_tutorial/
+
 -- vim: set ai sw=2 ts=2 :
 
