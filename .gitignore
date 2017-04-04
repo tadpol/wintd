@@ -5,9 +5,7 @@ Icon
 *.sw[a-z]
 tags
 
-.mrmurano/
-.mrmuranorc.*
-.mrmuranorc
+.murano/
 .env
 
 # Thumbnails
