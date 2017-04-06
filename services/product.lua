@@ -28,8 +28,6 @@ if dvs ~= nil then
 			dvn[k] = v
 		end
 	end
-	local tswq = TSW.write("window", {sn=data.device_sn}, dvs)
-	Timeseries.write({ query = tswq })
 
 	Tsdb.write{
 		tags = {sn = data.device_sn},
