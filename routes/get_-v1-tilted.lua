@@ -56,7 +56,7 @@ else
 	local max=0
 
 	local function tsbd_result_to_plot(out)
-		local resulting = {}
+		local resulting = setmetatable({}, {['__type']='slice'})
 		for _, entry in ipairs(out.values) do
 			local s = os.date('%Y-%m-%d %H:%M:%S', entry[1])
 			if type(entry[2]) == 'table' and type(entry[2].avg) == 'number' then
