@@ -61,9 +61,18 @@ end
 
 return table.concat({
 	" ,W,S,R",
-	table.concat({'W', window_last, window_last - shade_last, window_last - room_last}, ','),
-	table.concat({'S', shade_last - window_last, shade_last, shade_last - room_last}, ','),
-	table.concat({'R', room_last - window_last, room_last - shade_last, room_last}, ','),
+	table.concat({'W',
+		string.format('%.2f', window_last),
+		string.format('%.2f', window_last - shade_last),
+		string.format('%.2f', window_last - room_last)}, ','),
+	table.concat({'S',
+		string.format('%.2f', shade_last - window_last),
+		string.format('%.2f', shade_last),
+		string.format('%.2f', shade_last - room_last)}, ','),
+	table.concat({'R',
+		string.format('%.2f', room_last - window_last),
+		string.format('%.2f', room_last - shade_last),
+		string.format('%.2f', room_last)}, ','),
 }, "\n")
 
 -- vim: set ai sw=2 ts=2 :
