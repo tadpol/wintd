@@ -9,7 +9,6 @@ local window = Tsdb.query {
 	aggregate = {"avg"},
 	fill = "previous",
 	epoch = 's',
-	order_by = 'asc',
 }
 local windowshade = Tsdb.query {
 	tags = {sn = '7'},
@@ -19,7 +18,6 @@ local windowshade = Tsdb.query {
 	aggregate = {"avg"},
 	fill = "previous",
 	epoch = 's',
-	order_by = 'asc',
 }
 local room = Tsdb.query {
 	tags = {sn = '5'},
@@ -29,7 +27,6 @@ local room = Tsdb.query {
 	aggregate = {"avg"},
 	fill = "previous",
 	epoch = 's',
-	order_by = 'asc',
 }
 if request.parameters.raw ~= nil then
 	return {window = window, windowshade = windowshade, room = room}
